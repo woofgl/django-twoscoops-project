@@ -29,19 +29,22 @@ rm -f template.zip
 # zip -q -r  template.zip ../$(basename $templateDir)/* 
 zip -x create.sh  -q -r template.zip ./* 
 cd $curDir 
+echo $projectDir
 mkdir $projectDir
-if $mingw; then
-    mkvirtualenv $projectName"-dev"
-else
+WORKON_HOME=$(cygpath -v $WORKON_HOME)
+# if $mingw; then
+#     mkvirtualenv $projectName"-dev"
+# else
     cpvirtualenv base $projectName"-dev"
-fi
+# fi
 
-if $mingw; then
-   pip install django
-else
-    pip-accel install django
-fi
- 
+# if $mingw; then
+#    pip install django
+# else
+#     pip-accel install django
+# fi
+workon $projectName"-dev"
+echo `pwd`
 django-admin.py startproject --template=$templateDir/template.zip --extension=py,rst,html $projectName $projectDir
 cd $projectDir
 hintDir=`pwd`
@@ -101,7 +104,7 @@ echo -e '\t\t\t'        } >> $subProject
 echo -e '\t\t'    ] ,>> $subProject
 
 echo -e '\t'  \"settings\": { >> $subProject
-echo -e '\t\t'    \"python_interpreter\": \"$VIRTUALENVWRAPPER_HOOK_DIR/$projectName-dev/$pyi\", >> $subProject
+# echo -e '\t\t'    \"python_interpreter\": \"$VIRTUALENVWRAPPER_HOOK_DIR/$projectName-dev/$pyi\", >> $subProject
 echo -e '\t\t'   \"extra_paths\": [  >> $subProject
 echo -e '\t\t\t'       \"$VIRTUALENVWRAPPER_HOOK_DIR/$projectName-dev/Lib/site-packages\", >> $subProject 
 echo -e '\t\t\t'           \"$hintDir\" >> $subProject
@@ -117,5 +120,5 @@ else
     exec /opt/sublime_text_3/sublime_text $subProject &
 fi
 
-# workon $1"_dev"
+# # workon $1"_dev"
 
