@@ -4,6 +4,8 @@ templateDir="$(dirname $(readlink -f $0))"
 projectName=$1
 projectDir=$1_project
 
+set DJANGO_SETTINGS_MODULE=
+
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
 darwin=false;
@@ -12,7 +14,7 @@ pyi=bin/python
 case "`uname`" in
   CYGWIN*) cygwin=true ;;
   MINGW*) mingw=true;;
-esac 
+esac
 
 # echo $(basename $templateDir)
 # echo $curDir
@@ -26,30 +28,36 @@ esac
 
 cd $templateDir
 rm -f template.zip
-# zip -q -r  template.zip ../$(basename $templateDir)/* 
-zip -x create.sh  -q -r template.zip ./* 
-cd $curDir 
-echo $projectDir
+# zip -q -r  template.zip ../$(basename $templateDir)/*
+zip -x create.sh  -q -r template.zip ./*
+cd $curDir
+# echo $projectDir
 mkdir $projectDir
-WORKON_HOME=$(cygpath -v $WORKON_HOME)
-# if $mingw; then
-#     mkvirtualenv $projectName"-dev"
-# else
+if $mingw; then
+  WORKON_HOME=$(cygpath -v $WORKON_HOME)
+fi
+if $mingw; then
+    mkvirtualenv $projectName"-dev"
+else
     cpvirtualenv base $projectName"-dev"
-# fi
+fi
 
-# if $mingw; then
-#    pip install django
-# else
-#     pip-accel install django
-# fi
+if $mingw; then
+   pip install django
+  # echo ""
+else
+    pip-accel install django
+fi
+
 workon $projectName"-dev"
-echo `pwd`
-django-admin.py startproject --template=$templateDir/template.zip --extension=py,rst,html $projectName $projectDir
-cd $projectDir
+cd $curDir
+django-admin.py startproject --template=$templateDir/template.zip \
+    --extension=py,rst,html,sh $projectName $projectDir
+cd $curDir/$projectDir
 hintDir=`pwd`
 # mkvirtualenv -a `pwd`/$projectName $projectName"-dev"
 setvirtualenvproject
+add2virtualenv $curDir/$projectDir/$projectName
 # cd ..
 # cd $projectDir
 touch .gitignore
@@ -74,51 +82,6 @@ fi
 # cd .codeintel
 # touch config
 # # create config file
-
-# echo  { >> config
-# echo -e '\t' '"Python"': { >>config
-# echo -e '\t\t'    \"python\": \"c:/Users/Administrator/.virtualenvs/$projectName-dev/Scripts/python\", >> config 
-# echo -e '\t\t'     \"pythonExtraPaths\": [ >> config
-# echo -e '\t\t\t\t'       \"c:/Users/Administrator/.virtualenvs/$projectName-dev/Lib/site-packages\", >>config 
-# echo -e '\t\t\t\t'           \"`cygpath -v $hintDir`\" >> config
-# echo -e '\t\t\t'        ] >> config 
-# echo -e '\t'    } >> config
-# echo } >> config
-
-# # create sublime project
-# cd ..
-subProject=$projectName.sublime-project
-if $mingw; then
-  VIRTUALENVWRAPPER_HOOK_DIR=$(cygpath -v $VIRTUALENVWRAPPER_HOOK_DIR)
-  hintDir=$(cygpath -v $hintDir) 
-  pyi="Scripts/python"
-fi
-touch $subProject
-echo { >> $subProject
-echo -e '\t' \"folders\": >> $subProject
-echo -e '\t\t'   [ >> $subProject
-echo -e '\t\t\t'        { >> $subProject
-echo -e '\t\t\t\t'     \"follow_symlinks\": true, >> $subProject
-echo -e '\t\t\t\t'     \"path\": \"$hintDir\" >> $subProject
-echo -e '\t\t\t'        } >> $subProject
-echo -e '\t\t'    ] ,>> $subProject
-
-echo -e '\t'  \"settings\": { >> $subProject
-# echo -e '\t\t'    \"python_interpreter\": \"$VIRTUALENVWRAPPER_HOOK_DIR/$projectName-dev/$pyi\", >> $subProject
-echo -e '\t\t'   \"extra_paths\": [  >> $subProject
-echo -e '\t\t\t'       \"$VIRTUALENVWRAPPER_HOOK_DIR/$projectName-dev/Lib/site-packages\", >> $subProject 
-echo -e '\t\t\t'           \"$hintDir\" >> $subProject
-echo -e '\t\t'       ]  >> $subProject
-echo -e '\t\t'   }  >> $subProject
-
-echo -e '\t' } >> $subProject
-
-# open project
-if $mingw; then
-    exec d:/tools/sublime_text/sublime_text $subProject &
-else
-    exec /opt/sublime_text_3/sublime_text $subProject &
-fi
 
 # # workon $1"_dev"
 
