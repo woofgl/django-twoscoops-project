@@ -50,6 +50,8 @@ CACHES = {
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
 INSTALLED_APPS += (
     'debug_toolbar',
+    'django_extensions',
+    'django_pdb',
 )
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
@@ -58,6 +60,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
 MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django_pdb.middleware.PdbMiddleware',
 )
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation

@@ -4,7 +4,7 @@ templateDir="$(dirname $(readlink -f $0))"
 projectName=$1
 projectDir=$1_project
 
-set DJANGO_SETTINGS_MODULE=
+export  DJANGO_SETTINGS_MODULE=
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
@@ -27,61 +27,65 @@ esac
 # fi
 
 cd $templateDir
+set templateDir=$(pwd)
+echo $templateDir
 rm -f template.zip
-# zip -q -r  template.zip ../$(basename $templateDir)/*
+# # zip -q -r  template.zip ../$(basename $templateDir)/*
 zip -x create.sh  -q -r template.zip ./*
-cd $curDir
-# echo $projectDir
-mkdir $projectDir
-if $mingw; then
-  WORKON_HOME=$(cygpath -v $WORKON_HOME)
-fi
-if $mingw; then
-    mkvirtualenv $projectName"-dev"
-else
-    cpvirtualenv base $projectName"-dev"
-fi
+ cd $curDir
+ # echo $projectDir
+ mkdir $projectDir
+ if $mingw; then
+   WORKON_HOME=$(cygpath -v $WORKON_HOME)
+ fi
+ if $mingw; then
+     mkvirtualenv $projectName"-dev"
+ else
+     cpvirtualenv base $projectName"-dev"
+ fi
 
-if $mingw; then
-   pip install django
-  # echo ""
-else
-    pip-accel install django
-fi
+ workon $projectName"-dev"
 
-workon $projectName"-dev"
-cd $curDir
-django-admin.py startproject --template=$templateDir/template.zip \
-    --extension=py,rst,html,sh $projectName $projectDir
-cd $curDir/$projectDir
-hintDir=`pwd`
-# mkvirtualenv -a `pwd`/$projectName $projectName"-dev"
-setvirtualenvproject
-add2virtualenv $curDir/$projectDir/$projectName
-# cd ..
-# cd $projectDir
-touch .gitignore
-echo .idea >>.gitignore
-echo .codeintel >>.gitignore
-echo *.pyc >>.gitignore
- # mkvirtualenv $1"_dev"
+ if $mingw; then
+    pip install django
+   # echo ""
+ else
+     pip-accel install django
+ fi
 
- # virEnv=$(cygpath -v $(pwd))
-  # virEnv=$(basename $(pwd))
- # echo $virEnv
- # add2virtualenv $virEnv
-# init git flow
-git flow init -d
-if $mingw; then
-    pip install -r requirements/local.txt
-else
-    pip-accel install -r requirements/local.txt
-fi
+ cd $curDir
+ # echo  -e "django-admin.py startproject --template=$templateDir/template.zip --extension=py,rst,html,sh $projectName $projectDir" 
+ django-admin.py startproject --template=$templateDir/template.zip  \
+     --extension=py,rst,html,sh $projectName $projectDir
+  cd $curDir/$projectDir
+  hintDir=`pwd`
+  # mkvirtualenv -a `pwd`/$projectName $projectName"-dev"
+  setvirtualenvproject
+  add2virtualenv $curDir/$projectDir/$projectName
+  # cd ..
+  # cd $projectDir
+  touch .gitignore
+  echo .idea >>.gitignore
+  echo .codeintel >>.gitignore
+  echo *.pyc >>.gitignore
+   # mkvirtualenv $1"_dev"
 
-# mkdir .codeintel
-# cd .codeintel
-# touch config
-# # create config file
+   # virEnv=$(cygpath -v $(pwd))
+    # virEnv=$(basename $(pwd))
+   # echo $virEnv
+   # add2virtualenv $virEnv
+  # init git flow
+  git flow init -d
+  if $mingw; then
+      pip install -r requirements/local.txt
+  else
+      pip-accel install -r requirements/local.txt
+  fi
 
-# # workon $1"_dev"
+  # mkdir .codeintel
+  # cd .codeintel
+  # touch config
+  # # create config file
+
+  # # workon $1"_dev"
 
