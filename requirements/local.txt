@@ -7,5 +7,7 @@ Sphinx==1.2b1
 ipython
 ipdb
 bpython
-django-pdb
 django-extensions
+pylint
+-e git+https://github.com/woofgl/django-pdb
+
